@@ -3,77 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nocthyr</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #1a1a2e;
-            color: #ffffff;
-        }
-        .widgets {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .widget-button {
-            padding: 10px 20px;
-            background-color: #162447;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-        .widget-button:hover {
-            background-color: #1f4068;
-        }
-        #time {
-            font-size: 48px;
-            font-weight: bold;
-        }
-        #weather {
-            margin-top: 20px;
-            font-size: 20px;
-        }
-        #rss-feed {
-            margin-top: 20px;
-            max-width: 600px;
-            text-align: left;
-        }
-        #rss-feed ul {
-            padding: 0;
-            list-style: none;
-        }
-        #rss-feed ul li {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        #rss-feed ul li img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-        #rss-feed ul li a {
-            color: #4fd1c5;
-            text-decoration: none;
-            font-size: 16px;
-        }
-        #rss-feed ul li a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <title>Nocthyr New Tab Page</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="time"></div>
@@ -85,65 +16,15 @@
         <a href="https://github.com" target="_blank" class="widget-button">GitHub</a>
     </div>
 
-    <div id="rss-feed">
+    <div id="rss-feed-container">
         <h3>Latest News</h3>
-        <ul id="rss-list">Fetching RSS feed...</ul>
+        <div id="rss-feed-1">Fetching RSS feed...</div>
+
     </div>
 
-    <script>
-        // Update time every second
-        function updateTime() {
-            const timeEl = document.getElementById('time');
-            const now = new Date();
-            const timeString = now.toLocaleTimeString();
-            timeEl.textContent = timeString;
-        }
-        setInterval(updateTime, 1000);
-        updateTime();
 
-        // Fetch weather data (using a placeholder API)
-        async function fetchWeather() {
-            const weatherEl = document.getElementById('weather');
-            try {
-                const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=40.7128&longitude=-74.0060&current_weather=true');
-                const data = await response.json();
-                const temp = data.current_weather.temperature;
-                const condition = data.current_weather.weathercode;
-                weatherEl.textContent = `Current Temperature: ${temp}°C, Condition: ${condition}`;
-            } catch (error) {
-                weatherEl.textContent = 'Unable to fetch weather data.';
-            }
-        }
-        fetchWeather();
+    
 
-        // Fetch RSS feed with images
-        async function fetchRSSFeed() {
-            const rssList = document.getElementById('rss-list');
-            try {
-                const response = await fetch('https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml');
-                const text = await response.text();
-                const parser = new DOMParser();
-                const xml = parser.parseFromString(text, 'text/xml');
-                const items = xml.querySelectorAll('item');
-                rssList.innerHTML = '';
-                items.forEach(item => {
-                    const title = item.querySelector('title').textContent;
-                    const link = item.querySelector('link').textContent;
-                    const media = item.querySelector('media\\:content, enclosure');
-                    const imageUrl = media ? media.getAttribute('url') : 'https://via.placeholder.com/50';
-
-                    const listItem = document.createElement('li');
-                    listItem.innerHTML = `
-                        <img src="${imageUrl}" alt="News Thumbnail">
-                        <a href="${link}" target="_blank">${title}</a>
-                    `;
-                    rssList.appendChild(listItem);
-                });
-            } catch (error) {
-                rssList.textContent = 'Unable to fetch RSS feed.';
-            }
-        }
-        fetchRSSFeed();
-    </script>
+    <script src="scripts.js"></script>
 </body>
 </html>
