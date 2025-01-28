@@ -11,23 +11,28 @@ export async function onRequest(context) {
 
     try {
         const response = await fetch(feedUrl, {
-            headers: { "User-Agent": "Mozilla/5.0" },
+            headers: {
+                "User-Agent": "Mozilla/5.0", // Some RSS feeds require a User-Agent
+                "Accept": "application/rss+xml, application/xml, text/xml",
+            },
         });
 
         if (!response.ok) {
             throw new Error(`Failed to fetch RSS feed (status: ${response.status})`);
         }
 
-        const xml = await response.text();
-        return new Response(xml, {
+        const text = await response.text();
+
+        // Ensure the response is valid XML and properly formatted
+        return new Response(text, {
             headers: {
-                "Content-Type": "application/rss+xml",
-                "Access-Control-Allow-Origin": "*", // Allow frontend requests
+                "Content-Type": "application/rss+xml; charset=UTF-8",
+                "Access-Control-Allow-Origin": "*",
             },
         });
 
     } catch (error) {
-        return new Response(JSON.stringify({ error: "Failed to fetch RSS feed" }), {
+        return new Response(JSON.stringify({ error: `Failed to fetch RSS feed: ${error.message}` }), {
             status: 500,
             headers: { "Content-Type": "application/json" },
         });
