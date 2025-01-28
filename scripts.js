@@ -1,11 +1,11 @@
-// Update time every second
+// Update time every minute
 function updateTime() {
     const timeEl = document.getElementById('time');
     const now = new Date();
-    const timeString = now.toLocaleTimeString();
+    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     timeEl.textContent = timeString;
 }
-setInterval(updateTime, 1000);
+setInterval(updateTime, 60000); 
 updateTime();
 
 // Fetch weather data (using a placeholder API)
@@ -113,3 +113,97 @@ function createMediaElement(url) {
 fetchRSSFeed('https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml', 'rss-feed-1');
 fetchRSSFeed('https://en.eroeronews.com/feed', 'rss-feed-2');
 fetchRSSFeed('https://feeds.bbci.co.uk/news/rss.xml', 'rss-feed-3');
+
+// To-Do List functionality
+function addTask() {
+    const taskInput = document.getElementById('new-task');
+    const taskText = taskInput.value.trim();
+    if (taskText === '') return;
+
+    const tasksUl = document.getElementById('tasks');
+    const li = document.createElement('li');
+    li.textContent = taskText;
+
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.className = 'delete-button';
+    deleteButton.onclick = () => tasksUl.removeChild(li);
+
+    const editButton = document.createElement('button');
+    editButton.textContent = 'Edit';
+    editButton.className = 'edit-button';
+    editButton.onclick = () => editTask(li, taskText);
+
+    li.appendChild(editButton);
+    li.appendChild(deleteButton);
+    tasksUl.appendChild(li);
+
+    // Add click event to read the task
+    li.addEventListener('click', () => alert(taskText));
+
+    taskInput.value = ''; // Clear the input field
+}
+
+function editTask(li, oldText) {
+    const newText = prompt("Edit your task:", oldText);
+    if (newText !== null && newText.trim() !== '') {
+        li.firstChild.textContent = newText;
+    }
+}
+
+document.getElementById('new-task').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        addTask();
+    }
+});
+
+// Notes functionality
+function addNote() {
+    const noteContent = document.getElementById('note-content').value.trim();
+    if (noteContent === '') return;
+
+    const notesList = document.getElementById('notes-list');
+    const noteTitle = noteContent.split(' ').slice(0, 3).join(' ') || 'Untitled Note';
+
+    const noteDiv = document.createElement('div');
+    noteDiv.textContent = noteTitle;
+
+    const readButton = document.createElement('button');
+    readButton.textContent = 'Read';
+    readButton.className = 'read-button';
+    readButton.onclick = () => alert(noteContent);
+
+    const editButton = document.createElement('button');
+    editButton.textContent = 'Edit';
+    editButton.className = 'edit-button';
+    editButton.onclick = () => editNote(noteDiv, noteContent);
+
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.className = 'delete-button';
+    deleteButton.onclick = () => notesList.removeChild(noteDiv);
+
+    noteDiv.appendChild(readButton);
+    noteDiv.appendChild(editButton);
+    noteDiv.appendChild(deleteButton);
+    notesList.appendChild(noteDiv);
+
+    // Add click event to read the note
+    noteDiv.addEventListener('click', () => alert(noteContent));
+
+    document.getElementById('note-content').value = ''; // Clear the textarea
+}
+
+function editNote(noteDiv, oldContent) {
+    const newContent = prompt("Edit your note:", oldContent);
+    if (newContent !== null && newContent.trim() !== '') {
+        noteDiv.firstChild.textContent = newContent.split(' ').slice(0, 3).join(' ') || 'Untitled Note';
+    }
+}
+
+document.getElementById('note-content').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        e.preventDefault(); // Prevent newline in textarea
+        addNote();
+    }
+});
