@@ -22,8 +22,7 @@ async function fetchWeather() {
     }
 }
 fetchWeather();
-// Fetch and display a single RSS feed with images or videos using a Cloudflare Function
-// Fetch and display a single RSS feed with images or videos using a Cloudflare Worker
+// Fetch and display RSS feed with images or videos using a Cloudflare Worker
 async function fetchRSSFeed(feedUrl, containerId) {
     const container = document.getElementById(containerId);
 
@@ -33,12 +32,8 @@ async function fetchRSSFeed(feedUrl, containerId) {
     }
 
     try {
-        const workerUrl = 'https://your-worker-name.your-subdomain.workers.dev?url=' + encodeURIComponent(feedUrl);
-        const response = await fetch(workerUrl, {
-            headers: {
-                'Accept': 'application/rss+xml, application/xml, text/xml',
-            },
-        });
+        const workerUrl = 'https://newtab.nocthyr.workers.dev/?url=' + encodeURIComponent(feedUrl);
+        const response = await fetch(workerUrl);
 
         if (!response.ok) {
             throw new Error(`Failed to fetch feed: ${feedUrl}`);
@@ -57,16 +52,14 @@ async function fetchRSSFeed(feedUrl, containerId) {
             const link = item.querySelector('link')?.textContent || '#';
             const description = item.querySelector('description')?.textContent || '';
 
-            // Try to extract an image or video from media:content or description
             const mediaContent = item.querySelector('media\\:content, enclosure');
             const mediaUrl = mediaContent?.getAttribute('url') || 
                              description.match(/<img[^>]+src=["']([^"']+)["']/i)?.[1] || 
-                             null; // Set to null if no media is found
+                             null;
 
             return { title, link, mediaUrl };
         });
 
-        // Display the items in a list
         const ul = document.createElement('ul');
         items.forEach(item => {
             const li = document.createElement('li');
