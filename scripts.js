@@ -81,6 +81,37 @@ async function fetchRSSFeed(feedUrl, containerId) {
     }
 }
 
+
+
+
+function createMediaElement(url) {
+    const isImage = /\.(jpg|jpeg|png|gif)$/i.test(url);
+    const isVideo = /\.(mp4|webm|ogg)$/i.test(url);
+
+    if (isImage) {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = 'Thumbnail';
+        img.style = 'width: 100px; height: 100px; object-fit: cover; margin-right: 10px;';
+        img.onerror = () => { img.style.display = 'none'; };
+        return img;
+    } else if (isVideo) {
+        const video = document.createElement('video');
+        video.src = url;
+        video.style = 'width: 100px; height: 100px; object-fit: cover; margin-right: 10px;';
+        video.controls = true;
+        video.onerror = () => { video.style.display = 'none'; };
+        return video;
+    }
+    return document.createElement('div'); // Return an empty div if no media is found
+}
+
+// Fetch multiple RSS feeds
+fetchRSSFeed('https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml', 'rss-feed-1');
+fetchRSSFeed('https://en.eroeronews.com/feed', 'rss-feed-2');
+fetchRSSFeed('https://feeds.bbci.co.uk/news/rss.xml', 'rss-feed-3');
+
+
 // To-Do List functionality
 function addTask() {
     const taskInput = document.getElementById('new-task');
